@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NVA Demo — Nota AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-primary: #0d1117;
+    --bg-secondary: #111820;
+    --accent: #2563eb;
+    --accent-light: #3b82f6;
+    --accent-glow: rgba(37, 99, 235, 0.4);
+    --text-primary: #f0f6fc;
+    --text-secondary: #8b949e;
+    --text-muted: #484f58;
+    --sidebar-width: 220px;
+    --transition-speed: 0.35s;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: 'Roboto', 'Noto Sans KR', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: default;
+    user-select: none;
+  }
+
+  .kiosk { display: flex; width: 100%; height: 100%; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: var(--sidebar-width);
+    background: var(--bg-secondary);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    z-index: 10;
+  }
+
+  /* ── Thumbnail Cards ── */
+  .menu-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 10px 6px 10px;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .menu-item {
+    position: relative;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    overflow: hidden;
+    flex: 1;
+    min-height: 0;
+    border: 2.5px solid rgba(255,255,255,0.06);
+  }
+
+  .menu-item.active {
+    border-color: transparent;
+    background-image: linear-gradient(var(--bg-secondary), var(--bg-secondary)),
+                      linear-gradient(180deg, #1a2a5e 0%, #2563eb 50%, #3b82f6 100%);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    border: 2.5px solid transparent;
+    box-shadow: 0 0 18px rgba(37, 99, 235, 0.35), 0 0 6px rgba(59, 130, 246, 0.2);
+  }
+
+  .menu-item:not(.active) {
+    opacity: 0.5;
+  }
+
+  .menu-item:not(.active):hover {
+    opacity: 0.8;
+    border-color: rgba(255,255,255,0.18);
+  }
+
+  .menu-thumb {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform var(--transition-speed) ease;
+  }
+
+  .menu-item:hover .menu-thumb { transform: scale(1.05); }
+
+  .menu-thumb-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.75) 100%);
+    transition: background var(--transition-speed) ease;
+  }
+
+  .menu-item.active .menu-thumb-overlay {
+    background: linear-gradient(180deg, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.6) 100%);
+  }
+
+  .menu-text {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+    padding: 12px 12px;
+  }
+
+  .menu-item-label {
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 0.2px;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+    line-height: 1.2;
+  }
+
+  .menu-item-desc {
+    font-size: 10.5px;
+    color: rgba(255,255,255,0.75);
+    font-weight: 500;
+    margin-top: 2px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+  }
+
+  /* Auto-rolling progress on card */
+  .menu-item-progress {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    z-index: 3;
+  }
+
+  .menu-item-progress-bar {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: none;
+  }
+
+  .menu-item.active .menu-item-progress { display: block; }
+  .menu-item:not(.active) .menu-item-progress { display: none; }
+
+  .sidebar-footer {
+    padding: 6px 10px;
+    text-align: center;
+    background: var(--bg-secondary);
+  }
+
+  .sidebar-footer span {
+    font-size: 8px;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Main Video Area ── */
+  .main-area {
+    flex: 1;
+    position: relative;
+    background: #000;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .video-wrapper {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .video-container { position: absolute; inset: 0; }
+
+  .video-container video {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    position: absolute;
+    inset: 0;
+  }
+
+  .video-container video.visible { opacity: 1; }
+
+  /* Placeholder */
+  .placeholder {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 16px; opacity: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
+  }
+
+  .placeholder.visible { opacity: 1; }
+
+  .placeholder-icon {
+    width: 80px; height: 80px;
+    border: 2px solid var(--text-muted);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; color: var(--text-muted);
+  }
+
+  .placeholder-title { font-size: 28px; font-weight: 700; color: var(--text-primary); }
+  .placeholder-desc { font-size: 14px; color: var(--text-secondary); text-align: center; }
+
+  /* ── Video Seekbar ── */
+  .seekbar-container {
+    position: relative; height: 40px;
+    background: rgba(0,0,0,0.85);
+    display: flex; align-items: center;
+    padding: 0 16px; gap: 12px;
+    z-index: 20; flex-shrink: 0;
+  }
+
+  .seek-play-btn {
+    width: 28px; height: 28px;
+    background: none; border: none;
+    color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0; flex-shrink: 0;
+  }
+
+  .seek-play-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+  .seek-time {
+    font-size: 12px; color: var(--text-secondary);
+    font-weight: 500; font-variant-numeric: tabular-nums;
+    min-width: 90px; flex-shrink: 0;
+  }
+
+  .seek-track {
+    flex: 1; height: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px; position: relative;
+    cursor: pointer; transition: height 0.15s ease;
+  }
+
+  .seek-track:hover { height: 6px; }
+
+  .seek-filled {
+    height: 100%; background: var(--accent);
+    border-radius: 2px; width: 0%;
+    position: relative; transition: none;
+  }
+
+  .seek-handle {
+    position: absolute; right: -6px; top: 50%;
+    transform: translateY(-50%);
+    width: 12px; height: 12px;
+    background: var(--accent); border-radius: 50%;
+    opacity: 0; transition: opacity 0.15s ease;
+    box-shadow: 0 0 4px rgba(0,0,0,0.5);
+  }
+
+  .seek-track:hover .seek-handle { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="kiosk">
+  <div class="sidebar">
+    <div class="menu-list" id="menuList">
+      <div class="menu-item active" data-index="0" onclick="selectVideo(0)">
+        <div class="menu-thumb" id="thumb-0"></div>
+        <div class="menu-thumb-overlay"></div>
+        <div class="menu-text">
+          <div class="menu-item-label">Surveillance</div>
+          <div class="menu-item-desc">Illegal Dumping Detection</div>
+        </div>
+        <div class="menu-item-progress"><div class="menu-item-progress-bar" id="progress-0"></div></div>
+      </div>
+      <div class="menu-item" data-index="1" onclick="selectVideo(1)">
+        <div class="menu-thumb" id="thumb-1"></div>
+        <div class="menu-thumb-overlay"></div>
+        <div class="menu-text">
+          <div class="menu-item-label">Industrial Safety</div>
+          <div class="menu-item-desc">Ladder Work Pair Compliance</div>
+        </div>
+        <div class="menu-item-progress"><div class="menu-item-progress-bar" id="progress-1"></div></div>
+      </div>
+      <div class="menu-item" data-index="2" onclick="selectVideo(2)">
+        <div class="menu-thumb" id="thumb-2"></div>
+        <div class="menu-thumb-overlay"></div>
+        <div class="menu-text">
+          <div class="menu-item-label">ITS</div>
+          <div class="menu-item-desc">Automatic Incident Detection</div>
+        </div>
+        <div class="menu-item-progress"><div class="menu-item-progress-bar" id="progress-2"></div></div>
+      </div>
+      <div class="menu-item" data-index="3" onclick="selectVideo(3)">
+        <div class="menu-thumb" id="thumb-3"></div>
+        <div class="menu-thumb-overlay"></div>
+        <div class="menu-text">
+          <div class="menu-item-label">DMS</div>
+          <div class="menu-item-desc">Driver Monitoring System</div>
+        </div>
+        <div class="menu-item-progress"><div class="menu-item-progress-bar" id="progress-3"></div></div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <span>© 2021-2026. Nota Inc. All rights reserved.</span>
+    </div>
+  </div>
+
+  <div class="main-area">
+    <div class="video-wrapper" id="videoWrapper">
+      <div class="video-container" id="videoContainer"></div>
+
+      <div class="placeholder visible" id="placeholder-0">
+        <div class="placeholder-icon">▶</div>
+        <div class="placeholder-title">Surveillance</div>
+        <div class="placeholder-desc">Place surveillance.mp4 in the videos folder</div>
+      </div>
+      <div class="placeholder" id="placeholder-1">
+        <div class="placeholder-icon">▶</div>
+        <div class="placeholder-title">Industrial Safety</div>
+        <div class="placeholder-desc">Place industrial-safety.mp4 in the videos folder</div>
+      </div>
+      <div class="placeholder" id="placeholder-2">
+        <div class="placeholder-icon">▶</div>
+        <div class="placeholder-title">ITS</div>
+        <div class="placeholder-desc">Place its.mp4 in the videos folder</div>
+      </div>
+      <div class="placeholder" id="placeholder-3">
+        <div class="placeholder-icon">▶</div>
+        <div class="placeholder-title">DMS</div>
+        <div class="placeholder-desc">Place dms.mp4 in the videos folder</div>
+      </div>
+    </div>
+
+    <div class="seekbar-container" id="seekbar">
+      <button class="seek-play-btn" id="playPauseBtn" onclick="togglePlayPause()">
+        <svg id="iconPause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        <svg id="iconPlay" viewBox="0 0 24 24" style="display:none"><polygon points="5,3 19,12 5,21"/></svg>
+      </button>
+      <span class="seek-time" id="seekTime">0:00 / 0:00</span>
+      <div class="seek-track" id="seekTrack">
+        <div class="seek-filled" id="seekFilled">
+          <div class="seek-handle"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const CONFIG = {
+    videos: [
+      'videos/surveillance.mp4',
+      'videos/industrial-safety.mp4',
+      'videos/its.mp4',
+      'videos/dms.mp4',
+    ],
+    startTimes: [0, 0, 0, 0],
+    thumbnails: [
+      'thumbnails/surveillance.jpg',
+      'thumbnails/industrial-safety.jpg',
+      'thumbnails/its.jpg',
+      'thumbnails/dms.jpg',
+    ],
+    labels: ['Surveillance', 'Industrial Safety', 'ITS', 'DMS'],
+    autoPlayDuration: 25,
+    idleTimeout: 90,
+  };
+
+  let currentIndex = 0;
+  let isAutoMode = true;
+  let isPaused = false;
+  let autoTimer = null;
+  let idleTimer = null;
+  let videoElements = [];
+  let videosLoaded = [false, false, false, false];
+
+  const menuItems = document.querySelectorAll('.menu-item');
+  const overlayLabel = document.getElementById('overlayLabel');
+  const seekTime = document.getElementById('seekTime');
+  const seekFilled = document.getElementById('seekFilled');
+  const seekTrack = document.getElementById('seekTrack');
+  const iconPlay = document.getElementById('iconPlay');
+  const iconPause = document.getElementById('iconPause');
+  const videoContainer = document.getElementById('videoContainer');
+
+  function fmt(s) {
+    if (!s || !isFinite(s)) return '0:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, '0')}`;
+  }
+
+  CONFIG.thumbnails.forEach((src, i) => {
+    const thumbEl = document.getElementById(`thumb-${i}`);
+    const img = new Image();
+    img.onload = () => { thumbEl.style.backgroundImage = `url('${src}')`; };
+    img.onerror = () => { captureVideoThumb(i, thumbEl); };
+    img.src = src;
+  });
+
+  function captureVideoThumb(index, thumbEl) {
+    const tmp = document.createElement('video');
+    tmp.src = CONFIG.videos[index];
+    tmp.muted = true;
+    tmp.preload = 'auto';
+    tmp.currentTime = 2;
+    tmp.addEventListener('seeked', () => {
+      const c = document.createElement('canvas');
+      c.width = 320; c.height = 180;
+      c.getContext('2d').drawImage(tmp, 0, 0, 320, 180);
+      thumbEl.style.backgroundImage = `url('${c.toDataURL('image/jpeg', 0.7)}')`;
+      tmp.remove();
+    }, { once: true });
+    tmp.addEventListener('error', () => {
+      thumbEl.style.background = 'linear-gradient(135deg, #1a2233 0%, #0d1117 100%)';
+    });
+  }
+
+  CONFIG.videos.forEach((src, i) => {
+    const video = document.createElement('video');
+    video.src = src;
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.preload = 'auto';
+    video.addEventListener('canplaythrough', () => {
+      videosLoaded[i] = true;
+      if (i === currentIndex) {
+        document.getElementById(`placeholder-${i}`).classList.remove('visible');
+        video.classList.add('visible');
+        video.play().catch(() => {});
+      }
+    });
+    video.addEventListener('error', () => {
+      videosLoaded[i] = false;
+      if (i === currentIndex) {
+        document.getElementById(`placeholder-${i}`).classList.add('visible');
+      }
+    });
+    videoContainer.appendChild(video);
+    videoElements.push(video);
+  });
+
+  function updateSeekbar() {
+    const video = videoElements[currentIndex];
+    if (video && videosLoaded[currentIndex]) {
+      const cur = video.currentTime;
+      const dur = video.duration;
+      if (isFinite(dur) && dur > 0) {
+        seekFilled.style.width = `${(cur / dur) * 100}%`;
+        seekTime.textContent = `${fmt(cur)} / ${fmt(dur)}`;
+      }
+    }
+    requestAnimationFrame(updateSeekbar);
+  }
+
+  seekTrack.addEventListener('click', (e) => {
+    const video = videoElements[currentIndex];
+    if (!video || !videosLoaded[currentIndex]) return;
+    const rect = seekTrack.getBoundingClientRect();
+    const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    video.currentTime = ratio * video.duration;
+    if (isAutoMode) { goManual(); }
+  });
+
+  let isSeeking = false;
+  seekTrack.addEventListener('mousedown', (e) => { isSeeking = true; seekFromEvent(e); });
+  document.addEventListener('mousemove', (e) => { if (isSeeking) seekFromEvent(e); });
+  document.addEventListener('mouseup', () => { isSeeking = false; });
+
+  function seekFromEvent(e) {
+    const video = videoElements[currentIndex];
+    if (!video || !videosLoaded[currentIndex]) return;
+    const rect = seekTrack.getBoundingClientRect();
+    const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    video.currentTime = ratio * video.duration;
+    if (isAutoMode) { goManual(); }
+  }
+
+  function togglePlayPause() {
+    const video = videoElements[currentIndex];
+    if (!video || !videosLoaded[currentIndex]) return;
+    if (video.paused) {
+      video.play().catch(() => {});
+      isPaused = false;
+      iconPlay.style.display = 'none';
+      iconPause.style.display = 'block';
+    } else {
+      video.pause();
+      isPaused = true;
+      iconPlay.style.display = 'block';
+      iconPause.style.display = 'none';
+    }
+    if (isAutoMode) { goManual(); }
+  }
+
+  function goManual() {
+    isAutoMode = false;
+    clearInterval(autoTimer);
+    resetAutoProgressBars();
+    startIdleTimer();
+  }
+
+  function resetAutoProgressBars() {
+    CONFIG.videos.forEach((_, i) => {
+      const bar = document.getElementById(`progress-${i}`);
+      bar.style.transition = 'none';
+      bar.style.width = '0%';
+    });
+  }
+
+  function showVideo(index) {
+    menuItems.forEach((item, i) => item.classList.toggle('active', i === index));
+    videoElements.forEach((v, i) => {
+      if (i === index) {
+        if (videosLoaded[i]) {
+          v.classList.add('visible');
+          v.currentTime = CONFIG.startTimes[i] || 0;
+          v.play().catch(() => {});
+          document.getElementById(`placeholder-${i}`).classList.remove('visible');
+        } else {
+          v.classList.remove('visible');
+          document.getElementById(`placeholder-${i}`).classList.add('visible');
+        }
+      } else {
+        v.classList.remove('visible');
+        v.pause();
+        document.getElementById(`placeholder-${i}`).classList.remove('visible');
+      }
+    });
+    currentIndex = index;
+    isPaused = false;
+    iconPlay.style.display = 'none';
+    iconPause.style.display = 'block';
+  }
+
+  function startProgress(index) {
+    resetAutoProgressBars();
+    const bar = document.getElementById(`progress-${index}`);
+    requestAnimationFrame(() => {
+      bar.style.transition = `width ${CONFIG.autoPlayDuration}s linear`;
+      bar.style.width = '100%';
+    });
+  }
+
+  function startAutoRolling() {
+    isAutoMode = true;
+    clearInterval(autoTimer);
+    showVideo(currentIndex);
+    startProgress(currentIndex);
+    autoTimer = setInterval(() => {
+      const next = (currentIndex + 1) % CONFIG.videos.length;
+      showVideo(next);
+      startProgress(next);
+    }, CONFIG.autoPlayDuration * 1000);
+  }
+
+  function startIdleTimer() {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      currentIndex = (currentIndex + 1) % CONFIG.videos.length;
+      startAutoRolling();
+    }, CONFIG.idleTimeout * 1000);
+  }
+
+  function selectVideo(index) {
+    isAutoMode = false;
+    clearInterval(autoTimer);
+    resetAutoProgressBars();
+    showVideo(index);
+    startIdleTimer();
+  }
+
+  startAutoRolling();
+  updateSeekbar();
+</script>
+
+</body>
+</html>
