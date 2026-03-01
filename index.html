@@ -166,16 +166,55 @@
   .main-area {
     flex: 1;
     position: relative;
-    background: #000;
+    background: var(--bg-primary);
     overflow: hidden;
     display: flex;
     flex-direction: column;
+  }
+
+  /* ── Top Header Bar ── */
+  .top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    background: var(--bg-primary);
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .top-header-logo img {
+    height: 30px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .top-header-category {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .top-header-label {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -0.3px;
+    color: var(--text-primary);
+    transition: all 0.4s ease;
+  }
+
+  .top-header-desc {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    transition: all 0.4s ease;
   }
 
   .video-wrapper {
     flex: 1;
     position: relative;
     overflow: hidden;
+    background: #000;
   }
 
   .video-container { position: absolute; inset: 0; }
@@ -316,6 +355,16 @@
   </div>
 
   <div class="main-area">
+    <div class="top-header">
+      <div class="top-header-logo">
+        <img src="logo.png" alt="Nota AI">
+      </div>
+      <div class="top-header-category">
+        <span class="top-header-label" id="headerLabel">Surveillance</span>
+        <span class="top-header-desc" id="headerDesc">Illegal Dumping Detection</span>
+      </div>
+    </div>
+
     <div class="video-wrapper" id="videoWrapper">
       <div class="video-container" id="videoContainer"></div>
 
@@ -372,6 +421,7 @@
       'thumbnails/dms.jpg',
     ],
     labels: ['Surveillance', 'Industrial Safety', 'ITS', 'DMS'],
+    descriptions: ['Illegal Dumping Detection', 'Ladder Work Pair Compliance', 'Automatic Incident Detection', 'Driver Monitoring System'],
     autoPlayDuration: 25,
     idleTimeout: 90,
   };
@@ -385,7 +435,8 @@
   let videosLoaded = [false, false, false, false];
 
   const menuItems = document.querySelectorAll('.menu-item');
-  const overlayLabel = document.getElementById('overlayLabel');
+  const headerLabel = document.getElementById('headerLabel');
+  const headerDesc = document.getElementById('headerDesc');
   const seekTime = document.getElementById('seekTime');
   const seekFilled = document.getElementById('seekFilled');
   const seekTrack = document.getElementById('seekTrack');
@@ -542,6 +593,10 @@
     isPaused = false;
     iconPlay.style.display = 'none';
     iconPause.style.display = 'block';
+
+    // Update header
+    headerLabel.textContent = CONFIG.labels[index];
+    headerDesc.textContent = CONFIG.descriptions[index];
   }
 
   function startProgress(index) {
