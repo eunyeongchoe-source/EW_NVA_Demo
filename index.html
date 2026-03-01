@@ -184,8 +184,8 @@
   }
 
   .top-header-logo img {
-    height: 30px;
-    width: auto;
+    height: auto;
+    width: 160px;
     object-fit: contain;
   }
 
@@ -315,8 +315,8 @@
         <div class="menu-thumb" id="thumb-0"></div>
         <div class="menu-thumb-overlay"></div>
         <div class="menu-text">
-          <div class="menu-item-label">Surveillance</div>
-          <div class="menu-item-desc">Illegal Dumping Detection</div>
+          <div class="menu-item-label">Industrial Safety</div>
+          <div class="menu-item-desc">Two-Person Ladder Work Compliance</div>
         </div>
         <div class="menu-item-progress"><div class="menu-item-progress-bar" id="progress-0"></div></div>
       </div>
@@ -324,8 +324,8 @@
         <div class="menu-thumb" id="thumb-1"></div>
         <div class="menu-thumb-overlay"></div>
         <div class="menu-text">
-          <div class="menu-item-label">Industrial Safety</div>
-          <div class="menu-item-desc">Ladder Work Pair Compliance</div>
+          <div class="menu-item-label">Surveillance</div>
+          <div class="menu-item-desc">Illegal Dumping Detection</div>
         </div>
         <div class="menu-item-progress"><div class="menu-item-progress-bar" id="progress-1"></div></div>
       </div>
@@ -343,7 +343,7 @@
         <div class="menu-thumb-overlay"></div>
         <div class="menu-text">
           <div class="menu-item-label">DMS</div>
-          <div class="menu-item-desc">Driver Monitoring System</div>
+          <div class="menu-item-desc">Driver Monitoring</div>
         </div>
         <div class="menu-item-progress"><div class="menu-item-progress-bar" id="progress-3"></div></div>
       </div>
@@ -360,8 +360,8 @@
         <img src="logo.png" alt="Nota AI">
       </div>
       <div class="top-header-category">
-        <span class="top-header-label" id="headerLabel">Surveillance</span>
-        <span class="top-header-desc" id="headerDesc">Illegal Dumping Detection</span>
+        <span class="top-header-label" id="headerLabel">Industrial Safety</span>
+        <span class="top-header-desc" id="headerDesc">Two-Person Ladder Work Compliance</span>
       </div>
     </div>
 
@@ -370,13 +370,13 @@
 
       <div class="placeholder visible" id="placeholder-0">
         <div class="placeholder-icon">▶</div>
-        <div class="placeholder-title">Surveillance</div>
-        <div class="placeholder-desc">Place surveillance.mp4 in the videos folder</div>
+        <div class="placeholder-title">Industrial Safety</div>
+        <div class="placeholder-desc">Place industrial-safety.mp4 in the videos folder</div>
       </div>
       <div class="placeholder" id="placeholder-1">
         <div class="placeholder-icon">▶</div>
-        <div class="placeholder-title">Industrial Safety</div>
-        <div class="placeholder-desc">Place industrial-safety.mp4 in the videos folder</div>
+        <div class="placeholder-title">Surveillance</div>
+        <div class="placeholder-desc">Place surveillance.mp4 in the videos folder</div>
       </div>
       <div class="placeholder" id="placeholder-2">
         <div class="placeholder-icon">▶</div>
@@ -408,20 +408,20 @@
 <script>
   const CONFIG = {
     videos: [
-      'videos/surveillance.mp4',
       'videos/industrial-safety.mp4',
+      'videos/surveillance.mp4',
       'videos/its.mp4',
       'videos/dms.mp4',
     ],
     startTimes: [0, 0, 0, 0],
     thumbnails: [
-      'thumbnails/surveillance.jpg',
       'thumbnails/industrial-safety.jpg',
+      'thumbnails/surveillance.jpg',
       'thumbnails/its.jpg',
       'thumbnails/dms.jpg',
     ],
-    labels: ['Surveillance', 'Industrial Safety', 'ITS', 'DMS'],
-    descriptions: ['Illegal Dumping Detection', 'Ladder Work Pair Compliance', 'Automatic Incident Detection', 'Driver Monitoring System'],
+    labels: ['Industrial Safety', 'Surveillance', 'ITS', 'DMS'],
+    descriptions: ['Two-Person Ladder Work Compliance', 'Illegal Dumping Detection', 'Automatic Incident Detection', 'Driver Monitoring'],
     autoPlayDuration: 25,
     idleTimeout: 90,
   };
