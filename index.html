@@ -29,11 +29,9 @@
     color: var(--text-primary);
     cursor: default;
     user-select: none;
-    display: flex;
-    flex-direction: column;
   }
 
-  .kiosk { display: flex; flex: 1; min-height: 0; }
+  .kiosk { display: flex; width: 100%; height: 100%; }
 
   /* ── Sidebar ── */
   .sidebar {
@@ -77,28 +75,19 @@
     box-shadow: 0 0 18px rgba(37, 99, 235, 0.35), 0 0 6px rgba(59, 130, 246, 0.2);
   }
 
-  .menu-item:not(.active) {
-    opacity: 0.5;
-  }
-
-  .menu-item:not(.active):hover {
-    opacity: 0.8;
-    border-color: rgba(255,255,255,0.18);
-  }
+  .menu-item:not(.active) { opacity: 0.5; }
+  .menu-item:not(.active):hover { opacity: 0.8; border-color: rgba(255,255,255,0.18); }
 
   .menu-thumb {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
     transition: transform var(--transition-speed) ease;
   }
 
   .menu-item:hover .menu-thumb { transform: scale(1.05); }
 
   .menu-thumb-overlay {
-    position: absolute;
-    inset: 0;
+    position: absolute; inset: 0;
     background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.75) 100%);
     transition: background var(--transition-speed) ease;
   }
@@ -108,146 +97,86 @@
   }
 
   .menu-text {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    height: 100%;
-    padding: 12px 12px;
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    height: 100%; padding: 12px 12px;
   }
 
   .menu-item-label {
-    font-size: 15px;
-    font-weight: 900;
-    letter-spacing: 0.2px;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.8);
-    line-height: 1.2;
+    font-size: 15px; font-weight: 900; letter-spacing: 0.2px;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.8); line-height: 1.2;
   }
 
   .menu-item-desc {
-    font-size: 10.5px;
-    color: rgba(255,255,255,0.75);
-    font-weight: 500;
-    margin-top: 2px;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+    font-size: 10.5px; color: rgba(255,255,255,0.75); font-weight: 500;
+    margin-top: 2px; text-shadow: 0 1px 4px rgba(0,0,0,0.7);
   }
 
-  /* Auto-rolling progress on card */
   .menu-item-progress {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 3px;
-    background: rgba(255,255,255,0.08);
-    z-index: 3;
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px; background: rgba(255,255,255,0.08); z-index: 3;
   }
 
-  .menu-item-progress-bar {
-    height: 100%;
-    background: var(--accent);
-    width: 0%;
-    transition: none;
-  }
-
+  .menu-item-progress-bar { height: 100%; background: var(--accent); width: 0%; transition: none; }
   .menu-item.active .menu-item-progress { display: block; }
   .menu-item:not(.active) .menu-item-progress { display: none; }
 
-  .sidebar-footer {
-    padding: 6px 10px;
-    text-align: center;
-    background: var(--bg-secondary);
-  }
-
-  .sidebar-footer span {
-    font-size: 8px;
-    color: var(--text-muted);
-    letter-spacing: 0.3px;
-  }
+  .sidebar-footer { padding: 6px 10px; text-align: center; background: var(--bg-secondary); }
+  .sidebar-footer span { font-size: 8px; color: var(--text-muted); letter-spacing: 0.3px; }
 
   /* ── Main Video Area ── */
   .main-area {
-    flex: 1;
-    position: relative;
-    background: var(--bg-primary);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    flex: 1; position: relative; background: var(--bg-primary);
+    overflow: hidden; display: flex; flex-direction: column;
   }
 
   /* ── Top Header Bar ── */
   .top-header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
+    display: flex; align-items: center; justify-content: flex-end;
     padding: 24px 36px;
-    background: var(--bg-primary);
-    flex-shrink: 0;
+    background: var(--bg-primary); flex-shrink: 0;
     border-bottom: 1px solid rgba(255,255,255,0.04);
   }
 
-  .top-header-category {
-    display: flex;
-    align-items: baseline;
-    gap: 14px;
-  }
+  .top-header-category { display: flex; align-items: baseline; gap: 14px; }
 
   .top-header-label {
-    font-size: 32px;
-    font-weight: 900;
-    letter-spacing: -0.3px;
-    color: var(--text-primary);
-    transition: all 0.4s ease;
+    font-size: 32px; font-weight: 900; letter-spacing: -0.3px;
+    color: var(--text-primary); transition: all 0.4s ease;
   }
 
   .top-header-desc {
-    font-size: 22px;
-    font-weight: 400;
-    color: var(--text-secondary);
-    transition: all 0.4s ease;
+    font-size: 22px; font-weight: 400;
+    color: var(--text-secondary); transition: all 0.4s ease;
   }
 
   /* ── Sidebar Logo ── */
   .sidebar-logo {
     padding: 20px 16px 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
   .sidebar-logo img {
-    width: 80%;
-    height: auto;
-    object-fit: contain;
+    width: 80%; height: auto; object-fit: contain;
   }
 
-  .video-wrapper {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    background: #000;
-  }
-
+  .video-wrapper { flex: 1; position: relative; overflow: hidden; background: #000; }
   .video-container { position: absolute; inset: 0; }
 
   .video-container video {
-    width: 100%; height: 100%;
-    object-fit: contain;
-    opacity: 0;
-    transition: opacity 0.6s ease;
-    position: absolute;
-    inset: 0;
+    width: 100%; height: 100%; object-fit: contain;
+    opacity: 0; transition: opacity 0.6s ease;
+    position: absolute; inset: 0;
   }
 
   .video-container video.visible { opacity: 1; }
 
-  /* Placeholder */
   .placeholder {
     position: absolute; inset: 0;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    gap: 16px; opacity: 0;
-    transition: opacity 0.6s ease;
+    gap: 16px; opacity: 0; transition: opacity 0.6s ease;
     pointer-events: none;
     background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
   }
@@ -255,10 +184,8 @@
   .placeholder.visible { opacity: 1; }
 
   .placeholder-icon {
-    width: 80px; height: 80px;
-    border: 2px solid var(--text-muted);
-    border-radius: 20px;
-    display: flex; align-items: center; justify-content: center;
+    width: 80px; height: 80px; border: 2px solid var(--text-muted);
+    border-radius: 20px; display: flex; align-items: center; justify-content: center;
     font-size: 32px; color: var(--text-muted);
   }
 
@@ -267,64 +194,46 @@
 
   /* ── Video Seekbar ── */
   .seekbar-container {
-    position: relative; height: 40px;
-    background: rgba(0,0,0,0.85);
-    display: flex; align-items: center;
-    padding: 0 16px; gap: 12px;
+    position: relative; height: 40px; background: rgba(0,0,0,0.85);
+    display: flex; align-items: center; padding: 0 16px; gap: 12px;
     z-index: 20; flex-shrink: 0;
   }
 
   .seek-play-btn {
-    width: 28px; height: 28px;
-    background: none; border: none;
-    color: #fff; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    padding: 0; flex-shrink: 0;
+    width: 28px; height: 28px; background: none; border: none;
+    color: #fff; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; padding: 0; flex-shrink: 0;
   }
 
   .seek-play-btn svg { width: 18px; height: 18px; fill: currentColor; }
 
   .seek-time {
-    font-size: 12px; color: var(--text-secondary);
-    font-weight: 500; font-variant-numeric: tabular-nums;
-    min-width: 90px; flex-shrink: 0;
+    font-size: 12px; color: var(--text-secondary); font-weight: 500;
+    font-variant-numeric: tabular-nums; min-width: 90px; flex-shrink: 0;
   }
 
   .seek-track {
-    flex: 1; height: 4px;
-    background: rgba(255,255,255,0.15);
-    border-radius: 2px; position: relative;
-    cursor: pointer; transition: height 0.15s ease;
+    flex: 1; height: 4px; background: rgba(255,255,255,0.15);
+    border-radius: 2px; position: relative; cursor: pointer; transition: height 0.15s ease;
   }
 
   .seek-track:hover { height: 6px; }
 
   .seek-filled {
-    height: 100%; background: var(--accent);
-    border-radius: 2px; width: 0%;
-    position: relative; transition: none;
+    height: 100%; background: var(--accent); border-radius: 2px;
+    width: 0%; position: relative; transition: none;
   }
 
   .seek-handle {
-    position: absolute; right: -6px; top: 50%;
-    transform: translateY(-50%);
-    width: 12px; height: 12px;
-    background: var(--accent); border-radius: 50%;
-    opacity: 0; transition: opacity 0.15s ease;
-    box-shadow: 0 0 4px rgba(0,0,0,0.5);
+    position: absolute; right: -6px; top: 50%; transform: translateY(-50%);
+    width: 12px; height: 12px; background: var(--accent); border-radius: 50%;
+    opacity: 0; transition: opacity 0.15s ease; box-shadow: 0 0 4px rgba(0,0,0,0.5);
   }
 
   .seek-track:hover .seek-handle { opacity: 1; }
 </style>
 </head>
 <body>
-
-<div class="top-header">
-  <div class="top-header-category">
-    <span class="top-header-label" id="headerLabel">Industrial Safety</span>
-    <span class="top-header-desc" id="headerDesc">Two-Person Ladder Work Compliance</span>
-  </div>
-</div>
 
 <div class="kiosk">
   <div class="sidebar">
@@ -376,6 +285,13 @@
   </div>
 
   <div class="main-area">
+    <div class="top-header">
+      <div class="top-header-category">
+        <span class="top-header-label" id="headerLabel">Industrial Safety</span>
+        <span class="top-header-desc" id="headerDesc">Two-Person Ladder Work Compliance</span>
+      </div>
+    </div>
+
     <div class="video-wrapper" id="videoWrapper">
       <div class="video-container" id="videoContainer"></div>
 
@@ -605,7 +521,6 @@
     iconPlay.style.display = 'none';
     iconPause.style.display = 'block';
 
-    // Update header
     headerLabel.textContent = CONFIG.labels[index];
     headerDesc.textContent = CONFIG.descriptions[index];
   }
